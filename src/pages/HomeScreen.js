@@ -4,7 +4,7 @@ import { View, Text, TouchableOpacity } from "react-native"
 import { StyleSheet } from "react-native";
 import { FlatList } from "react-native";
 
-const ip = "192.168.0.113"
+const ip = "192.168.1.20"
 const port = "3000"
 export const  HomeScreen = ({ navigation }) => {
     [lastPlays, setLPlays] = useState([])
