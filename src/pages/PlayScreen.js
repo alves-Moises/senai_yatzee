@@ -13,11 +13,16 @@ export const PlayScreen = ({navigation}) => {
     
 
     // Play
+    var dice_counter = 0
     const row_dices = () => {
         const newDiceList = []
         for(let i = 0; i < 6; i++){
             const selectedDice = row_dice()
-            newDiceList.push(selectedDice)            
+            newDiceList.push({
+                id: dice_counter, 
+                dice: selectedDice
+            })        
+            dice_counter++    
             setScore(Score => Score + selectedDice)
 
             setRowCount(rowCount + 1)
@@ -34,7 +39,7 @@ export const PlayScreen = ({navigation}) => {
         return dice
     } 
 
-    const saveRecord = async() =>{
+    const saveRecord = async () =>{
         const response = await axios.get(`http://${ip}:${port}/records`)
         console.log(response.data)
 
@@ -42,7 +47,7 @@ export const PlayScreen = ({navigation}) => {
     return(
         <View style={styles.container}>
             <Text style={styles.title}>PLAY</Text>
-            <View>
+            <View style={styles.body}>
                 {rowCount < 3 ? "" : (
 
                     <View style={styles.infoFields} >
@@ -64,18 +69,23 @@ export const PlayScreen = ({navigation}) => {
                 <View style={[
                     styles.diceRow,
                     rowCount < 3 
-                    ? { paddingTop: 40 }
+                    ? { paddingTop: 0 }
                     :""
                 ]}>
                         
-
-
-                    {diceList.map(dice => 
-                        <Image
+                    <FlatList 
+                    // TOD#O: fix this shit!
+                        style={styles.diceList}
+                        data={diceList}
+                        keyExtractor={item => item.id.toString()}
+                        renderItem={({item}) => 
+                            ( <Image
                             style={styles.diceIMG}
-                            source={{ uri: dicesImg[dice] }}
-                        />
-                    )}
+                            source={{ uri: dicesImg[item.dice] }}
+                        />)
+                        }
+                    />
+ 
                 </View>
                 <Text style={styles.score}>Score: {Score}</Text>
             </View>
@@ -102,6 +112,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#F0C',
         alignItems: 'center',
         justifyContent: 'space-between'
+    },
+    body: {
+        width: "97%",
+        padding: 0,
+        
     },
     title: {
         fontSize: 30,
@@ -145,26 +160,35 @@ const styles = StyleSheet.create({
     diceIMG: {
         width: 80,
         height: 80,
-        margin: 10,
+        margin: 0,
         // backgroundColor: "#ff2"
     },
     
     diceRow: {
+        // justifyContent: "space-around",
         flexDirection: "row",
-        justifyContent: "space-around",
-        gap: 5,
         backgroundColor: "#d0a",
         flexWrap: "wrap",
         borderWidth: 1,
         borderColor: "#FDE",
-        paddingVertical: 10
+        paddingVertical: 10,
+        padding: 0,
+        width: "100%"
+        
+    },
+    diceList: {
+        justifyContent: "space-around",
+
+        flexDirection: "row",
+        backgroundColor: "#ff0",
+        widtht: "100%"
     },
 
     rowButton: {
         borderWidth: 1,
         borderRadius: 10,
         padding: 10,
-        margin: 10,
+        margin: 16,
         width: 150,
         alignItems: "center"
     },
